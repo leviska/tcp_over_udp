@@ -48,6 +48,7 @@ func runServer() {
 				}
 			}
 		}()
+		break
 	}
 }
 
@@ -59,17 +60,22 @@ func runClient() {
 		panic(err)
 	}
 	defer conn.Close()
+	go func() {
+		for {
+			buf, err := conn.Receive()
+			if err != nil {
+				panic("expected message from server, got error: " + err.Error())
+			}
+			fmt.Printf("got message %q\n", string(buf))
+		}
+	}()
+	
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		err := conn.Send(scanner.Bytes())
 		if err != nil {
 			panic("couldn't send message, error: " + err.Error())
 		}
-		buf, err := conn.Receive()
-		if err != nil {
-			panic("expected message from server, got error: " + err.Error())
-		}
-		fmt.Printf("got message %q\n", string(buf))
 	}
 }
 

@@ -1,6 +1,9 @@
 package udp
 
-import "net"
+import (
+	"fmt"
+	"net"
+)
 
 type Connection struct {
 	conn   *net.UDPConn
@@ -46,6 +49,9 @@ func (c *Connection) Receive() ([]byte, error) {
 	if c.hasBuf {
 		c.hasBuf = false
 		return c.buf, nil
+	}
+	if !c.client {
+		return nil, fmt.Errorf("can't receive from server connection")
 	}
 	c.buf = c.buf[:cap(c.buf)]
 	n, _, err := c.conn.ReadFromUDP(c.buf)
