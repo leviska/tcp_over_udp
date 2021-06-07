@@ -19,9 +19,8 @@ func NewMixingFailure(size int) *MixingFailureConn {
 }
 
 func (c *MixingFailureConn) Clone() tcp.Converter {
-	res := *c
-	res.buf = make([][]byte, len(c.buf))
-	return &res
+	res := NewMixingFailure(len(c.buf))
+	return res
 }
 
 func (c *MixingFailureConn) Convert(conn udp.Connector) udp.Connector {
