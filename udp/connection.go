@@ -3,7 +3,16 @@ package udp
 import (
 	"fmt"
 	"net"
+	"time"
 )
+
+type Connector interface {
+	Receive() ([]byte, error)
+	Send([]byte) error
+	Addr() *net.UDPAddr
+	IsClient() bool
+	Close()
+}
 
 type Connection struct {
 	conn   *net.UDPConn
@@ -13,9 +22,14 @@ type Connection struct {
 	hasBuf bool
 }
 
-func emptyConnection() *Connection {
+const (
+	MaxPacketSize = 8192
+	TimeoutSecs   = 1
+)
+
+func newConnection() *Connection {
 	return &Connection{
-		buf: make([]byte, 2048),
+		buf: make([]byte, MaxPacketSize),
 	}
 }
 
@@ -26,7 +40,7 @@ func NewConnection(addr *net.UDPAddr) (*Connection, error) {
 	if err != nil {
 		return nil, err
 	}
-	res := emptyConnection()
+	res := newConnection()
 	res.conn = conn
 	res.addr = addr
 	res.client = true
@@ -54,6 +68,7 @@ func (c *Connection) Receive() ([]byte, error) {
 		return nil, fmt.Errorf("can't receive from server connection")
 	}
 	c.buf = c.buf[:cap(c.buf)]
+	c.conn.SetDeadline(time.Now().Add(time.Second * TimeoutSecs))
 	n, _, err := c.conn.ReadFromUDP(c.buf)
 	c.buf = c.buf[:n]
 	if err != nil {
@@ -64,4 +79,8 @@ func (c *Connection) Receive() ([]byte, error) {
 
 func (c *Connection) Addr() *net.UDPAddr {
 	return c.addr
+}
+
+func (c *Connection) IsClient() bool {
+	return c.client
 }

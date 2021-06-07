@@ -1,6 +1,14 @@
 package udp
 
-import "net"
+import (
+	"net"
+	"time"
+)
+
+const (
+	IP   = "127.0.0.1"
+	PORT = 1337
+)
 
 type Server struct {
 	conn *net.UDPConn
@@ -26,7 +34,8 @@ func NewServer(addr *net.UDPAddr) (*Server, error) {
 }
 
 func (s *Server) Connection() (Connector, error) {
-	c := emptyConnection()
+	c := newConnection()
+	s.conn.SetDeadline(time.Now().Add(time.Second * TimeoutSecs))
 	n, remoteaddr, err := s.conn.ReadFromUDP(c.buf)
 	if err != nil {
 		return nil, err
@@ -36,4 +45,8 @@ func (s *Server) Connection() (Connector, error) {
 	c.buf = c.buf[:n]
 	c.hasBuf = true
 	return c, nil
+}
+
+func (s *Server) Close() {
+	s.conn.Close()
 }
