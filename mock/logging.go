@@ -36,7 +36,7 @@ func (c *LoggingConn) Receive() ([]byte, error) {
 		}
 	} else {
 		seqNum := binary.BigEndian.Uint64(d[0:8])
-		util.Logger.Infof("%s logging receive %s [%d]: %q", c.cKind(), c.pKind(d), seqNum, string(d[16:]))
+		util.Logger.Infof("%s logging receive %s [%d]: %q", c.cKind(), c.pKind(d), seqNum, util.Truncate(string(d[16:]), 30))
 	}
 	return d, err
 }
@@ -47,7 +47,7 @@ func (c *LoggingConn) Send(d []byte) error {
 		util.Logger.Infof("%s logging send error: %v", c.cKind(), err)
 	} else {
 		seqNum := binary.BigEndian.Uint64(d[0:8])
-		util.Logger.Infof("%s logging send %s [%d]: %q", c.cKind(), c.pKind(d), seqNum, string(d[16:]))
+		util.Logger.Infof("%s logging send %s [%d]: %q", c.cKind(), c.pKind(d), seqNum, util.Truncate(string(d[16:]), 30))
 	}
 	return err
 }

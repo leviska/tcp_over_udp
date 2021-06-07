@@ -6,7 +6,7 @@ func Truncate(s string, i int) string {
 	if len(s) < i {
 		return s
 	}
-	return s[:i] + "..."
+	return s[:i] + "...(truncated)"
 }
 
 func RandomString(size int) string {

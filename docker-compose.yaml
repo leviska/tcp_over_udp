@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  server:
+    build: .
+    ports:
+      - "1337:1337"
+    command: testing/testserver.sh
+    #logging:
+    #  driver: "none"
+  client:
+    build: .
+    command: testing/testclient.sh server
+    #logging:
+    #  driver: "none"
+  pumba:
+    image: "gaiaadm/pumba:0.7.8"
+    command: ${PUMBA}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - "server"

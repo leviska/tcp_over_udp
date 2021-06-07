@@ -8,8 +8,9 @@ import (
 
 var (
 	port = flag.Int("port", 1337, "port to run the server on/to connect client to")
-	ip   = flag.String("ip", "127.0.0.1", "ip to run the server on/to connect client to")
+	ip   = flag.String("ip", "0.0.0.0", "ip to run the server on/to connect client to")
 	mode = flag.String("mode", "client", "(client|server) which mode to run")
+	output = flag.String("output", "", "path to output")
 )
 
 func main() {
