@@ -1,7 +1,9 @@
 # Run
 
 `go run ./cmd -mode=server` to run server
+
 `go run ./cmd -mode=client -ip=*server ip*` to run client
+
 `make (loss|rate|corrupt)` to run tests with pumba
 
 # Описание
